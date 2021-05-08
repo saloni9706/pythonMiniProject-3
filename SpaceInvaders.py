@@ -82,9 +82,10 @@ class Bullets(pg.sprite.Sprite):
 
 class Enemies(pg.sprite.Sprite):
 
-    def __init__(self,x,y):
+    def __init__(self,x,y,i):
         pg.sprite.Sprite.__init__(self)
-        self.image=pg.image.load("enemies.png")
+       
+        self.image=pg.image.load("enemy_"+i+".png")
         self.rect=self.image.get_rect()
         self.rect.center=[x,y]
         self.move_counter=0
@@ -125,14 +126,27 @@ bullet_group=pg.sprite.Group()
 enemies_group=pg.sprite.Group()
 enemies_bullets=pg.sprite.Group()
 
-def draw_enemies():
+def draw_enemies(level_no):
     # print("jhfkj")
-    for i in range(5):
-        for j in range(5):
-            enemy=Enemies(100+j*100,100+i*70)
-            enemies_group.add(enemy)
+    if(level_no==1):
+        for i in range(3):
+            for j in range(3):
+                enemy=Enemies(100+j*100,100+i*70,str(i+1))
+                enemies_group.add(enemy)
 
-draw_enemies()
+    if(level_no==2):
+        for i in range(4):
+            for j in range(4):
+                enemy=Enemies(100+j*100,100+i*70,str(i+1))
+                enemies_group.add(enemy)
+
+    if(level_no==3):
+        for i in range(5):
+            for j in range(5):
+                enemy=Enemies(100+j*100,100+i*70,str(i+1))
+                enemies_group.add(enemy)
+
+# draw_enemies()
 
 
 global level_no,score_1,total_lives
@@ -145,7 +159,7 @@ font = pg.font.Font('freesansbold.ttf', 32)
 spaceship=SpaceInvadors(int(screen_width/2),screen_height - 100,2)
 # bullets=Bullets(2,4)
 spaceship_group.add(spaceship)
-
+call_function=1
 game=True
 while game:
 
@@ -162,11 +176,29 @@ while game:
     lives_center=lives.get_rect()
     lives_center.left=450
     
+    if total_lives==0 :
+            game_over=font.render("Game Over !!",True,(236,228,228))
+            screen.blit(game_over,(200,400))
+            pg.time.wait(2000)
+            # game=False
+
     screen.blit(score,score_center)
     screen.blit(level,level.get_rect())
     screen.blit(lives,lives_center)
 
+    if level_no==1 and call_function==1:
+        pg.time.wait(1000)
+        draw_enemies(level_no)
+        call_function=0 
+    if level_no==2 and call_function==1:
+        pg.time.wait(1000)
+        draw_enemies(level_no)
+        call_function=0
 
+    if level_no==3 and call_function==1:
+        pg.time.wait(1000)
+        draw_enemies(level_no)
+        call_function=0    
 
     current_time=pg.time.get_ticks()
 
@@ -181,10 +213,15 @@ while game:
         level_no+=1
         text = font.render('Level '+str(level_no), True,(255, 102, 51))
         count_level=1
+        call_function=1
+
+    
 
     for event in pg.event.get():
         if event.type==pg.QUIT:
                 game=False
+        
+
 
     spaceship.move_spaceship()
     bullet_group.update()
@@ -201,6 +238,6 @@ while game:
 pg.quit()
 
 
-# image = Image.open('bullet_4.png')
-# new_image = image.resize((10, 10))
-# new_image.save('enemy_bullet.png')
+# image = Image.open('enemy.png')
+# new_image = image.resize((50, 50))
+# new_image.save('enemy_2.png')
