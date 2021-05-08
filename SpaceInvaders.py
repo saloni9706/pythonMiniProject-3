@@ -55,8 +55,10 @@ class SpaceInvadors(pg.sprite.Sprite):
             self.last_shot=current_time
 
         self.mask=pg.mask.from_surface(self.image)
-
-        pg.draw.rect(screen,(115,0,0),(self.rect.x,(self.rect.bottom+10),self.rect.width,15))
+    
+    # def draw_rect(self):
+    #     pg.draw.rect(screen,(0, 0, 255), (50,450, 50, 50))
+    #     pg.draw.rect(screen,(0, 0, 255), (350,450, 50, 50))
 
 class Bullets(pg.sprite.Sprite):
     def __init__(self,x,y):
@@ -78,6 +80,10 @@ class Bullets(pg.sprite.Sprite):
             self.kill()
             global score_1
             score_1=score_1+10
+        if pg.sprite.spritecollide(self,obs_grp,True):
+            self.kill()
+                # global score_1
+                # score_1=score_1+10
 
 
 class Enemies(pg.sprite.Sprite):
@@ -98,6 +104,27 @@ class Enemies(pg.sprite.Sprite):
         if abs(self.move_counter)>50:
             self.move_direction *= -1
             self.move_counter *= self.move_direction
+        # if pg.sprite.spritecollide(self,spaceship_group,True):
+        #     pass
+class obstacles(pg.sprite.Sprite):
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+       
+        self.image=pg.image.load("enemy_1.png")
+        self.rect=self.image.get_rect()
+    def draw_rect(self):
+        
+        pg.draw.rect(screen,(0, 0, 255), (50,450, 50, 50))
+        pg.draw.rect(screen,(0, 0, 255), (350,450, 50, 50))
+    
+    def update(self):
+        # if pg.sprite.spritecollide(self,bullet_group,True):
+        #     self.kill()
+        if pg.sprite.spritecollide(self,enemies_bullets,True):
+            self.kill()
+        if pg.sprite.spritecollide(self,bullet_group,True,pg.sprite.collide_mask):
+            self.kill()
+
 
 class EnemiesBullets(pg.sprite.Sprite):
 
@@ -117,6 +144,11 @@ class EnemiesBullets(pg.sprite.Sprite):
             global total_lives
             total_lives-=1
             # spaceship.lives_remaining-=1
+        if pg.sprite.spritecollide(self,obs_grp,False,pg.sprite.collide_mask):
+            self.kill()
+        #  if pg.sprite.spritecollide(self,obs_grp,True):
+        #     self.kill()
+            
 
 
 pg.init()
@@ -125,6 +157,7 @@ spaceship_group=pg.sprite.Group()
 bullet_group=pg.sprite.Group()
 enemies_group=pg.sprite.Group()
 enemies_bullets=pg.sprite.Group()
+obs_grp=pg.sprite.Group()
 
 def draw_enemies(level_no):
     # print("jhfkj")
@@ -159,6 +192,8 @@ font = pg.font.Font('freesansbold.ttf', 32)
 spaceship=SpaceInvadors(int(screen_width/2),screen_height - 100,2)
 # bullets=Bullets(2,4)
 spaceship_group.add(spaceship)
+obs=obstacles()
+obs_grp.add(obs)
 call_function=1
 game=True
 while game:
@@ -224,6 +259,8 @@ while game:
 
 
     spaceship.move_spaceship()
+    obs.draw_rect()
+    obs_grp.update()
     bullet_group.update()
     enemies_group.update()
     enemies_bullets.update()
